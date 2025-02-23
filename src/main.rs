@@ -31,7 +31,7 @@ fn main() {
     let results = bonus::table
         .load::<Bonus>(&mut conn)
         .expect("Error loading bonuses");
-    println!("bonus get all #={}", results.len());
+    log::info!("bonus get all #={}", results.len());
     for bn in results {
         println!("{}, {}, {}, {}", bn.ename, bn.job, bn.sal, bn.comm);
     }
