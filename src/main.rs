@@ -15,14 +15,15 @@ use schema::{bonus, emp};
 
 #[derive(QueryableByName, Debug)]
 struct DbVersion {
-    #[sql_type = "diesel::sql_types::Text"]
+    #[diesel(sql_type = diesel::sql_types::Text)]
     v: String,
 }
 
 // Function to establish a database connection
 pub fn establish_connection() -> PgConnection {
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set on ENV");
+    PgConnection::establish(&database_url)
+        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
 fn main() {
@@ -31,7 +32,6 @@ fn main() {
     let mut pargs = pico_args::Arguments::from_env();
 
     let mut conn = establish_connection();
-
 
     let version_query = diesel::sql_query("select version() as v")
         .load::<DbVersion>(&mut conn)
@@ -60,7 +60,6 @@ fn main() {
     for emp1 in results {
         println!("Emp={:?}", emp1)
     }
-
 
     /*
 
